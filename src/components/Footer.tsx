@@ -6,7 +6,7 @@ export const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-4">Contact Info</h3>
             <div className="space-y-2 text-muted-foreground">
-              <p>Email: support@rewardportal.com</p>
+              <p>Email: support@rewixcash.com</p>
               <p>Phone: +1 (555) 123-4567</p>
               <p>Hours: 9 AM - 6 PM EST</p>
             </div>
@@ -37,7 +37,7 @@ export const Footer = () => {
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-          <p>&copy; 2024 RewardPortal. All rights reserved. Demo version.</p>
+          <p>&copy; 2024 RewixCash. All rights reserved. Demo version.</p>
         </div>
       </div>
     </footer>

@@ -69,7 +69,7 @@ export const Registration = () => {
         'rewix_cash',
         'template_rewixcash',
         templateParams,
-        'Configexe'
+        'XYZAzM38tuB6la8mCB'
       );
 
       setStep('otp');
@@ -124,7 +124,7 @@ export const Registration = () => {
 
       toast({
         title: "Registration successful!",
-        description: "Welcome to RewardPortal. Start earning points now!",
+        description: "Welcome to RewixCash. Start earning points now!",
       });
 
       navigate('/dashboard');
@@ -164,7 +164,7 @@ export const Registration = () => {
                'Registration Complete'}
             </CardTitle>
             <CardDescription>
-              {step === 'form' ? 'Join RewardPortal and start earning points today!' :
+              {step === 'form' ? 'Join RewixCash and start earning points today!' :
                step === 'otp' ? 'Enter the 6-digit code sent to your email' :
                'Your account has been verified successfully!'}
             </CardDescription>

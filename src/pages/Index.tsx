@@ -50,7 +50,7 @@ const Index = () => {
           <div className="text-center">
             <div className="text-6xl mb-6">🎁</div>
             <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-6">
-              Welcome to RewardPortal
+              Welcome to RewixCash
             </h1>
             <p className="text-xl text-primary-foreground/90 mb-8 max-w-3xl mx-auto">
               The ultimate platform to earn points by watching ads and redeem them for real rewards. 
@@ -81,7 +81,7 @@ const Index = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-foreground mb-4">
-            Why Choose RewardPortal?
+            Why Choose RewixCash?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Our platform offers the best way to earn rewards through simple tasks and advertisements

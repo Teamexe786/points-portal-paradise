@@ -192,7 +192,7 @@ export const Support = () => {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="font-medium text-sm mb-1">Email Support</h4>
-                  <p className="text-sm text-muted-foreground">support@rewardportal.com</p>
+                  <p className="text-sm text-muted-foreground">support@rewixcash.com</p>
                 </div>
                 
                 <div>

@@ -58,7 +58,7 @@ export const Login = () => {
             </div>
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
             <CardDescription>
-              Sign in to your RewardPortal account
+              Sign in to your RewixCash account
             </CardDescription>
           </CardHeader>
           <CardContent>

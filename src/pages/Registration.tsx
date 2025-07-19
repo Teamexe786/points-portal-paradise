@@ -58,6 +58,9 @@ export const Registration = () => {
       const otpCode = generateOtp();
       setGeneratedOtp(otpCode);
 
+      // Initialize EmailJS (this is required)
+      emailjs.init('XYZAzM38tuB6la8mCB');
+
       // Send email using EmailJS
       const templateParams = {
         to_name: formData.fullName,
@@ -65,12 +68,16 @@ export const Registration = () => {
         to_email: formData.email,
       };
 
-      await emailjs.send(
+      console.log('Sending OTP email with params:', templateParams);
+
+      const response = await emailjs.send(
         'rewix_cash',
         'template_rewixcash',
         templateParams,
         'XYZAzM38tuB6la8mCB'
       );
+
+      console.log('EmailJS response:', response);
 
       setStep('otp');
       setOtpSent(true);
@@ -79,9 +86,10 @@ export const Registration = () => {
         description: "Please check your email for the verification code.",
       });
     } catch (error) {
+      console.error('EmailJS error:', error);
       toast({
         title: "Failed to send OTP",
-        description: "Please try again later.",
+        description: `Error: ${error instanceof Error ? error.message : 'Please check your EmailJS configuration'}`,
         variant: "destructive"
       });
     } finally {

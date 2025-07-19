@@ -8,6 +8,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { StorageManager, User } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
 import { UserPlus, Mail, Phone, User as UserIcon, Shield } from 'lucide-react';
+import { sendOtp, verifyOtp } from '@/utils/sendOtp';
 
 
 export const Registration = () => {
@@ -20,27 +21,7 @@ export const Registration = () => {
   });
   const [step, setStep] = useState<'form' | 'otp' | 'verified'>('form');
   const [otp, setOtp] = useState('');
-  const [generatedOtp, setGeneratedOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-
-  const generateOtp = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
-  const sendOTP = async (email: string, otp: string) => {
-    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-otp`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-      },
-      body: JSON.stringify({ email, otp })
-    });
-
-    const data = await res.json();
-    return data;
-  };
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,22 +50,12 @@ export const Registration = () => {
     setIsLoading(true);
 
     try {
-      const otpCode = generateOtp();
-      setGeneratedOtp(otpCode);
-
-      // Send OTP via Supabase Edge Function
-      const response = await sendOTP(formData.email, otpCode);
-
-      if (response.success) {
-        setStep('otp');
-        setOtpSent(true);
-        toast({
-          title: "OTP Sent!",
-          description: "Please check your email for the verification code.",
-        });
-      } else {
-        throw new Error(response.error || 'Failed to send OTP');
-      }
+      await sendOtp(formData.email, formData.fullName);
+      setStep('otp');
+      toast({
+        title: "OTP Sent!",
+        description: "Please check your email for the verification code.",
+      });
     } catch (error) {
       console.error('OTP sending error:', error);
       toast({
@@ -97,19 +68,33 @@ export const Registration = () => {
     }
   };
 
-  const handleVerifyOtp = () => {
-    if (otp === generatedOtp) {
-      setStep('verified');
+  const handleVerifyOtp = async () => {
+    setIsLoading(true);
+    
+    try {
+      const result = await verifyOtp(formData.email, otp);
+      
+      if (result.success) {
+        setStep('verified');
+        toast({
+          title: "OTP Verified!",
+          description: "You can now complete your registration.",
+        });
+      } else {
+        toast({
+          title: "Invalid OTP",
+          description: result.message || "Please enter the correct OTP from your email.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
       toast({
-        title: "OTP Verified!",
-        description: "You can now complete your registration.",
-      });
-    } else {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter the correct OTP from your email.",
+        title: "Verification failed",
+        description: "Something went wrong. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -281,9 +266,9 @@ export const Registration = () => {
                 <Button 
                   onClick={handleVerifyOtp}
                   className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
-                  disabled={otp.length !== 6}
+                  disabled={otp.length !== 6 || isLoading}
                 >
-                  Verify OTP
+                  {isLoading ? "Verifying..." : "Verify OTP"}
                 </Button>
 
                 <div className="text-center">

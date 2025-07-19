@@ -8,7 +8,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp
 import { StorageManager, User } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
 import { UserPlus, Mail, Phone, User as UserIcon, Shield } from 'lucide-react';
-import emailjs from '@emailjs/browser';
+
 
 export const Registration = () => {
   const navigate = useNavigate();
@@ -26,6 +26,20 @@ export const Registration = () => {
 
   const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+  const sendOTP = async (email: string, otp: string) => {
+    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-otp`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify({ email, otp })
+    });
+
+    const data = await res.json();
+    return data;
   };
 
   const handleSendOtp = async (e: React.FormEvent) => {
@@ -58,38 +72,24 @@ export const Registration = () => {
       const otpCode = generateOtp();
       setGeneratedOtp(otpCode);
 
-      // Initialize EmailJS (this is required)
-      emailjs.init('XYZAzM38tuB6la8mCB');
+      // Send OTP via Supabase Edge Function
+      const response = await sendOTP(formData.email, otpCode);
 
-      // Send email using EmailJS
-      const templateParams = {
-        to_name: formData.fullName,
-        otp_code: otpCode,
-        to_email: formData.email,
-      };
-
-      console.log('Sending OTP email with params:', templateParams);
-
-      const response = await emailjs.send(
-        'rewix_cash',
-        'template_rewixcash',
-        templateParams,
-        'XYZAzM38tuB6la8mCB'
-      );
-
-      console.log('EmailJS response:', response);
-
-      setStep('otp');
-      setOtpSent(true);
-      toast({
-        title: "OTP Sent!",
-        description: "Please check your email for the verification code.",
-      });
+      if (response.success) {
+        setStep('otp');
+        setOtpSent(true);
+        toast({
+          title: "OTP Sent!",
+          description: "Please check your email for the verification code.",
+        });
+      } else {
+        throw new Error(response.error || 'Failed to send OTP');
+      }
     } catch (error) {
-      console.error('EmailJS error:', error);
+      console.error('OTP sending error:', error);
       toast({
         title: "Failed to send OTP",
-        description: `Error: ${error instanceof Error ? error.message : 'Please check your EmailJS configuration'}`,
+        description: `Error: ${error instanceof Error ? error.message : 'Please try again later'}`,
         variant: "destructive"
       });
     } finally {
